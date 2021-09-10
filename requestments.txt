@@ -1,5 +1,0 @@
-requests
-gevent
-bs4
-dominate
-future
