@@ -48,7 +48,14 @@ def processData(allDict):
         whois = {'空': '空'}
     else:
         whois = whois[0]
-    urlPATH = list(set(allDict["urlPATH"]))
+    urlPathList = []
+    for urlPath in allDict["urlPATH"]:
+        if '://' in urlPath:
+            url0 = urlPath[urlPath.find(':')+3:]
+            urlPathList.append(url0)
+        else:
+            urlPathList.append(urlPath)
+    urlPATH = list(set(urlPathList))
     if urlPATH == []:
         urlPATH = ['空']
     beiAn = allDict["beiAn"]
@@ -108,7 +115,7 @@ def all2HTML(url, allDict, error):
             for i in isCDN:
                 for k, v in i.items():
                     data1.append(v)
-            for j in range(len(data1)-2):
+            for j in range(0, (len(data1)-1), 2):
                 tr(td('{0}'.format(data1[j]), align="center"), td('{0}'.format(data1[j+1]), align="center"))
             tr(td('{0}'.format(data1[-1]), align="center", colspan="2"))
 

@@ -382,9 +382,9 @@ class request:
     def googleHack(self):
         global allDict, error
         flag10 = False
-        header = headers('www.google.com.hk')
+        header = headers('www.google-fix.com')
         result = []
-        site = 'https://www.google.com.hk/search?hl=zh-CN&gbv=2&q=site:'+self.url
+        site = 'https://www.google-fix.com/search?hl=zh-CN&gbv=2&q=site:'+self.url
         print('[*] 正在通过GoogleHack收集url路径......')
         try:
             r = self.get(site, header)
@@ -393,15 +393,17 @@ class request:
                 num1 = re.findall(' (.*?) ', num0[0])[0]
                 if ',' in num1:
                     num1 = int(num1.replace(',', ''))  # 4,306 ==> 4306
+                print("\033[1;36m[*] Google共搜索到"+str(num1)+"条数据!!\033[0m")
                 for i in range(int(num1)//10+1):
-                    site1 = 'https://www.google.com.hk/search?hl=zh-CN&gbv=2&q=site:'+self.url+'&start={0}'.format(i*10)
+                    site1 = 'https://www.google-fix.com/search?hl=zh-CN&gbv=2&q=site:'+self.url+'&start={0}'.format(i*10)
                     r = self.get(site1, header)
-                    soup1 = bs(r, 'lxml')
-                    data = soup1.find_all(name='a')
+                    soup = bs(r, 'lxml')
+                    data = soup.find_all(name='a')
                     for i in data:
                         r1 = re.findall('href=\"(.*?)\"', str(i))
                         for j in r1:
                             if (self.url+'/' in j) and ('.google' not in j): #当前域名的提取目录
+                                print("\033[1;36m[*] 从Google中成功提取地址："+str(j)+"\033[0m")
                                 result.append(j)
             flag10 = True
             result1 = list(set(result))  #去重
@@ -416,7 +418,6 @@ class request:
                 else:
                     print('\033[1;35m[-] 第{0}条网址 {1} 已经爬取过, 将执行跳过!\033[0m'.format(count, d))
             allDict['urlPATH'] += result1
-
         except Exception as e:
             print(e)
             error.append(self.url+'-->'+'GoogleHack获取url路径信息失败!'+'-->'+str(e))
@@ -552,4 +553,5 @@ class request:
         finally:
             if flag14 != True:
                 self.detectWaf()
+
 
