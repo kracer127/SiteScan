@@ -1,6 +1,7 @@
 requests
 gevent
 bs4
+lxml
 dominate
 future
 pluginbase
