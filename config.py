@@ -17,7 +17,7 @@ def headers(host):
 allow_redirects = True
 
 # 超时时间
-timeout = 20
+timeout = 30
 
 # 是否开启代理
 try:
