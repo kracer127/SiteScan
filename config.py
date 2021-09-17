@@ -17,7 +17,7 @@ def headers(host):
 allow_redirects = True
 
 # 超时时间
-timeout = 30
+timeout = 4
 
 # 是否开启代理
 try:
@@ -30,6 +30,13 @@ proxies = {'https': proxy}
 
 # 是否开启https服务器的证书校验
 allow_ssl_verify = False
+
+# 网络错误后重新发包的次数
+tryTimes = 5
+
+# google搜索过程中的提取量
+num2google = 800
+
 
 
 # 扫描1224个常见端口（nmap + 自己的收集）

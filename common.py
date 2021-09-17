@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument("-u", "--url", help="The website to scan")
     parser.add_argument("-p", "--proxy", help="Use an HTTP proxy to perform requests, examples:http://hostname:8080, \nsocks5://hostname:1080,http://user:pass@hostname:8080")
     return parser.parse_args()
+
 # 预处理用户输入的URL
 def processUrl(url):
     URL = []
@@ -4097,6 +4098,7 @@ def processUrl(url):
         else:
             URL.append(domain)
     return URL
+
 # 判断该网站是否存活
 def isAlive(url):
     header = headers(url)

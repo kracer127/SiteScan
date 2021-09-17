@@ -22,6 +22,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 #定义的常量
 allDict = {'nowIP': [], 'domain': [], 'ports': [], 'whois': [], 'beiAn': [], 'framework': [[], {}, {}], 'urlPATH': [], 'isCDN': [], 'pangZhan': [], 'historyIP': []}
 error = []
+times = tryTimes
 
 
 # 定义的web基础信息请求包类
@@ -79,7 +80,7 @@ class request:
 
     #获取当前查询网站的ip地址 及对应的国家
     def domain2ip(self):
-        global allDict, error
+        global allDict, error, times
         flag1 = False
         header = headers('www.ip.cn')
         url = 'https://www.ip.cn/ip/{0}.html'.format(self.url)
@@ -94,15 +95,18 @@ class request:
             allDict['nowIP'] += result
             print('\033[1;34m[*] 完成url解析查询, 共'+str(len(result))+'条数据!!\033[0m')
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'domain2ip解析错误!'+'-->'+str(e))
             print('\033[1;31m[-] url解析查询失败!\033[0m')
         finally:
-            if flag1 != True:
+            if (flag1 != True) and (times >= 1):
                 self.domain2ip()
+            else:
+                times = tryTimes
 
     # 获取ip下的旁站获取
     def pangZhan(self):
-        global allDict, error
+        global allDict, error, times
         flag2 = False
         header = headers('www.webscan.cc')
         url = 'https://www.webscan.cc/ip_' + self.url
@@ -114,15 +118,18 @@ class request:
             flag2 = True
             print('\033[1;34m[*] 完成旁站信息查询, 共'+str(len(result)-2)+'条数据!!\033[0m')
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'PangZhan获取旁站失败!'+'-->'+str(e))
             print('\033[1;31m[-] 旁站信息查询失败!\033[0m')
         finally:
-            if flag2 != True:
+            if (flag2 != True) and (times >= 1):
                 self.pangZhan()
+            else:
+                times = tryTimes
 
     # IP138查询函数，获取域名当前ip地址历史解析、子域名、备案、whois信息
     def IP138(self):
-        global allDict, error
+        global allDict, error, times
         header = headers('site.ip138.com')
         site = "http://site.ip138.com/"
         ip_list, beian_list, domain_list, whois_list = [], [], [], []
@@ -130,7 +137,7 @@ class request:
         url_domain = site+self.subdomain+"/domain.htm"
         url_beian = site+self.subdomain+"/beiAn.htm"
         url_whois = site+self.subdomain+"/whois.htm"
-        def ip():
+        def ip(times):
             flag3_1 = False
             '''ip138的ip解析功能'''
             try:
@@ -144,12 +151,15 @@ class request:
                 allDict['historyIP'] = ip_list
                 print("\033[1;36m[+] ip历史解析查询完成, 共"+str(len(ip_list))+"条数据!\033[0m")
             except Exception as e:
-                error.append(self.url+'-->'+'ip138获取域名信息失败!'+'-->'+str(e))
-                print('\033[1;31m[~] IP138解析失败!\033[0m')
+                times -= 1
+                error.append(self.url+'-->'+'ip138获取地址ip信息失败!'+'-->'+str(e))
+                print('\033[1;31m[~] IP138地址ip解析失败!\033[0m')
             finally:
-                if flag3_1 != True:
-                    ip()
-        def domain():
+                if (flag3_1 != True) and (times >= 1):
+                    ip(times)
+                else:
+                    times = tryTimes
+        def domain(times):
             flag3_2 = False
             '''ip138的子域名功能'''
             try:
@@ -159,12 +169,15 @@ class request:
                 allDict['domain'] = r1_domain
                 print("\033[1;36m[+] 子域名查询完成, 共"+str(len(r1_domain))+"条数据!!\033[0m")
             except Exception as e:
-                error.append(self.url+'-->'+'ip138获取域名信息失败!'+'-->'+str(e))
-                print('\033[1;31m[~] IP138解析失败!\033[0m')
+                times -= 1
+                error.append(self.url+'-->'+'ip138获取子域名信息失败!'+'-->'+str(e))
+                print('\033[1;31m[~] IP138获取子域名信息失败!\033[0m')
             finally:
-                if flag3_2 != True:
-                    domain()
-        def beian():
+                if (flag3_2 != True) and (times >= 1):
+                    domain(times)
+                else:
+                    times = tryTimes
+        def beian(times):
             flag3_3 = False
             '''ip138的备案功能'''
             try:
@@ -180,12 +193,15 @@ class request:
                 allDict['beiAn'] = beian_list
                 print("\033[1;36m[+] 域名备案信息查询完成, 共"+str(len(beian_list))+"条数据!!\033[0m")
             except Exception as e:
-                error.append(self.url+'-->'+'ip138获取域名信息失败!'+'-->'+str(e))
-                print('\033[1;31m[~] IP138解析失败!\033[0m')
+                times -= 1
+                error.append(self.url+'-->'+'ip138获取备案信息失败!'+'-->'+str(e))
+                print('\033[1;31m[~] IP138获取备案信息失败!\033[0m')
             finally:
-                if flag3_3 != True:
-                    beian()
-        def isWho():
+                if (flag3_3 != True) and (times >= 1):
+                    beian(times)
+                else:
+                    times = tryTimes
+        def isWho(times):
             flag3_4 = False
             '''ip138的whois查询不稳定，此调用python-whois库来实现'''
             try:
@@ -200,21 +216,24 @@ class request:
                 allDict['whois'] += [r1_whois]
                 print("\033[1;36m[+] whois信息查询完成, 共"+str(len(r1_whois))+"条数据!!\033[0m")
             except Exception as e:
-                error.append(self.url+'-->'+'ip138获取域名信息失败!'+'-->'+str(e))
-                print('\033[1;31m[~] IP138解析失败!\033[0m')
+                times -= 1
+                error.append(self.url+'-->'+'ip138获取whois信息失败!'+'-->'+str(e))
+                print('\033[1;31m[~] IP138获取whois信息失败!\033[0m')
             finally:
-                if flag3_4 != True:
-                    isWho()
+                if (flag3_4 != True) and (times >= 1):
+                    isWho(times)
+                else:
+                    times = tryTimes
         print("[*] 正在进行ip138查询......")
-        ip()
-        domain()
-        beian()
-        isWho()
+        ip(times)
+        domain(times)
+        beian(times)
+        isWho(times)
         print("\033[1;34m[*] IP138所有信息查询完成!!\033[0m")
 
     # whatweb获取网站的架构信息
     def whatWeb(self):
-        global allDict, error
+        global allDict, error, times
         flag4 = False
         header = headers('www.whatweb.net')
         site = 'https://www.whatweb.net/whatweb.php'
@@ -231,15 +250,18 @@ class request:
             allDict['framework'][0] += result
             print('\033[1;34m[*] 完成网站的架构信息查询, 共'+str(len(result)-2)+'条数据!!\033[0m')
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'whatweb获取网站的架构信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] 网站的架构信息查询失败!\033[0m')
         finally:
-            if flag4 != True:
+            if (flag4 != True) and (times >= 1):
                 self.whatWeb()
+            else:
+                times = tryTimes
 
     # icpchacha.com备案查询函数
     def Icp(self):
-        global allDict, error
+        global allDict, error, times
         flag5 = False
         header = headers('www.icpchacha.com')
         site = "http://www.icpchacha.com/s/"
@@ -267,15 +289,18 @@ class request:
             flag5 = True
             print('\033[1;34m[*] 完成所有备案信息查询完成, 共'+str(len(beian_list))+'条数据!!\033[0m')
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'Icp获取网站的备案信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] 域名备案信息查询失败!\033[0m')
         finally:
-            if flag5 != True:
+            if (flag5 != True) and (times >= 1):
                 self.Icp()
+            else:
+                times = tryTimes
 
     # whatweb.bugscanner网站的CMS信息查询函数
     def getCms(self):
-        global allDict, error
+        global allDict, error, times
         flag6 = False
         header = headers('whatweb.bugscaner.com')
         site = 'http://whatweb.bugscaner.com/what.go'
@@ -289,15 +314,18 @@ class request:
             allDict['framework'][1] = Cms_list
             print('\033[1;34m[*] 完成网站指纹识别, 共'+str(len(Cms_list))+'条数据!!\033[0m')
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'whatweb获取网站指纹信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] 网站指纹信息查询失败!\033[0m')
         finally:
-            if flag6 != True:
+            if (flag6 != True) and (times >= 1):
                 self.getCms()
+            else:
+                times = tryTimes
 
     # crt.sh查询子域名函数
     def getCrtDomain(self):
-        global allDict, error
+        global allDict, error, times
         flag7 = False
         header = headers('crt.sh')
         site = "https://crt.sh/?q="
@@ -320,15 +348,18 @@ class request:
             allDict['domain'] += crt_list
             print("\033[1;34m[*] 完成crt子域名获取, 共"+str(len(crt_list))+"条数据!!\033[0m")
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'crt获取子域名信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] crt.sh获取子域名信息查询失败!\033[0m')
         finally:
-            if flag7 != True:
+            if (flag7 != True) and (times >= 1):
                 self.getCrtDomain()
+            else:
+                times = tryTimes
 
     # virusTotal获取子域名函数
     def virusDomain(self):
-        global allDict, error
+        global allDict, error, times
         flag8 = False
         header = headers('www.virustotal.com')
         site = "https://www.virustotal.com/vtapi/v2/domain/report?apikey=e3ce6d7c072b832b91392dd57e8124c0a16775b80e04081c9827a74b5f79abe1&domain="
@@ -347,15 +378,18 @@ class request:
             allDict['domain'] += result
             print("\033[1;34m[*] 完成virusTotal子域名获取, 共"+str(len(result))+"条数据!!\033[0m")
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'virusTotal获取子域名信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] virusTotal获取子域名信息查询失败!\033[0m')
         finally:
-            if flag8 != True:
+            if (flag8 != True) and (times >= 1):
                 self.virusDomain()
+            else:
+                times = tryTimes
 
     # Hackertarget获取子域名函数(需翻墙）
     def hackerTarget(self):
-        global allDict, error
+        global allDict, error, times
         flag9 = False
         header = headers('api.hackertarget.com')
         site = "https://api.hackertarget.com/hostsearch/?q="
@@ -372,15 +406,18 @@ class request:
             allDict['domain'] += result1
             print("\033[1;34m[*] 完成hackertarget子域名获取, 共"+str(len(result1))+"条数据!!\033[0m")
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'hackertarget获取子域名信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] hackertarget获取子域名信息查询失败!\033[0m')
         finally:
-            if flag9 != True:
+            if (flag9 != True) and (times >= 1):
                 self.hackerTarget()
+            else:
+                times = tryTimes
 
     # GoogleHacking获取子域名 (需翻墙）
     def googleHack(self):
-        global allDict, error
+        global allDict, error, times
         flag10 = False
         header = headers('www.google-fix.com')
         result = []
@@ -394,7 +431,9 @@ class request:
                 if ',' in num1:
                     num1 = int(num1.replace(',', ''))  # 4,306 ==> 4306
                 print("\033[1;36m[*] Google共搜索到"+str(num1)+"条数据!!\033[0m")
-                for i in range(int(num1)//10+1):
+                if int(num1) > num2google:  # 避免几千条数据的长时间爬取
+                    num1 = num2google
+                for i in range((int(num1)//10)+1):
                     site1 = 'https://www.google-fix.com/search?hl=zh-CN&gbv=2&q=site:'+self.url+'&start={0}'.format(i*10)
                     r = self.get(site1, header)
                     soup = bs(r, 'lxml')
@@ -419,16 +458,18 @@ class request:
                     print('\033[1;35m[-] 第{0}条网址 {1} 已经爬取过, 将执行跳过!\033[0m'.format(count, d))
             allDict['urlPATH'] += result1
         except Exception as e:
-            print(e)
+            times -= 1
             error.append(self.url+'-->'+'GoogleHack获取url路径信息失败!'+'-->'+str(e))
             print('\033[1;31m[-] GoogleHack获取url路径信息查询失败!\033[0m')
         finally:
-            if flag10 != True:
+            if (flag10 != True) and (times >= 1):
                 self.googleHack()
+            else:
+                times = tryTimes
 
     # ip33.com的api获取网站开发端口信息
     def getPorts(self):
-        global allDict, error
+        global allDict, error, times
         flag11 = False
         header = {
     'Host': 'api.ip33.com',
@@ -498,15 +539,18 @@ class request:
             flag11 = True
             print('\n'+"\033[1;34m[*] 完成获取端口信息, 共"+str(len(allDict['ports']))+"条数据!!\033[0m")
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'获取端口信息失败!'+'-->'+str(e))
             print('\n'+'\033[1;31m[-] ip138获取端口开放信息失败!\033[0m')
         finally:
-            if flag11 != True:
+            if (flag11 != True) and (times >= 1):
                 self.getPorts()
+            else:
+                times = tryTimes
 
     # 判断是否存在CDN
     def isCDN(self):
-        global allDict, error
+        global allDict, error, times
         flag12 = False
         header = headers('myssl.com')
         result = []
@@ -520,38 +564,49 @@ class request:
             allDict['isCDN'] += data   #返回的形式为 [{}]
             print("\033[1;34m[*] 完成CDN查询, 共"+str(len(data))+"条数据!!\033[0m")
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'myssl.com查询CDN失败!'+'-->'+str(e))
             print('\033[1;31m[-] myssl.com查询CDN信息失败!\033[0m')
         finally:
-            if flag12 != True:
+            if (flag12 != True) and (times >= 1):
                 self.isCDN()
+            else:
+                time = tryTimes
 
     # JSfinder查找js文件及提取子域名
     def jsFinder(self):
+        global times
         flag13 = False
         print('[*] 正在爬取网站js文件，查找url路径及提取子域名......')
         try:
             urls = Prepare(allDict, self.url)
             flag13 = True
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'爬取网站js文件失败!'+'-->'+str(e))
             print('\033[1;31m[-] 爬取网站js文件信息失败!\033[0m')
         finally:
-            if flag13 != True:
+            if (flag13 != True) and (times >= 1):
                 self.jsFinder()
+            else:
+                times = tryTimes
 
     # wafw00f侦探网站的waf
     def detectWaf(self):
+        global times
         flag14 = True
         print('[*] 正在侦探网站的waf信息......')
         try:
             entrance.main(allDict, self.url)
             flag14 = True
         except Exception as e:
+            times -= 1
             error.append(self.url+'-->'+'侦探网站的waf失败!'+'-->'+str(e))
             print('\033[1;31m[-] 侦探网站的waf信息失败!\033[0m')
         finally:
-            if flag14 != True:
+            if (flag14 != True) and (times >= 1):
                 self.detectWaf()
+            else:
+                times = tryTimes
 
 
