@@ -3,5 +3,6 @@ gevent
 bs4
 dominate
 future
+pluginbase
 
 
