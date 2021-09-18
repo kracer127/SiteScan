@@ -75,8 +75,9 @@ def processData(allDict):
     for d in urlPATH:
         for k in houTai_list:
             if k in d:
-                urlPATH.remove(d)
                 houTai.append(d)
+	for t in houTai:
+		urlPATH.remove(t)
 
 
 
