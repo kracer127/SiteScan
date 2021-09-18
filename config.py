@@ -17,7 +17,7 @@ def headers(host):
 allow_redirects = True
 
 # 超时时间
-timeout = 30
+timeout = 10
 
 # 是否开启代理
 try:
@@ -32,7 +32,7 @@ proxies = {'https': proxy}
 allow_ssl_verify = False
 
 # 网络错误后重新发包的次数
-tryTimes = 5
+tryTimes = 3
 
 # google搜索过程中的提取量
 num2google = 400
