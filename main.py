@@ -70,28 +70,26 @@ def main(url, subDomain):
     t8 = request(subDomain).virusDomain()
     t8_1 = Thread(target=t8)
     tasks.append(t8_1)
-    # 判断能否翻墙以便进入下面两个函数
-    def able2GFW():
-        gfwFlag = request(url).ableGFW()
-        if gfwFlag == True:
-            # 进入 Hackertarget函数 获取子域名函数(需翻墙)
-            request(subDomain).hackerTarget()
-            # 进入 GoogleHacking函数 获取子所有域名+url路径 (需翻墙）
-            request(subDomain).googleHack()
-    t9 = Thread(target=able2GFW)
-    tasks.append(t9)
-    # 进入getPorts函数 获取网站开发端口信息
-    t10 = request(url).getPorts()
+    # 进入 Chaziyu函数 获取子域名函数
+    t9 = request(subDomain).Chaziyu()
+    t9_1 = Thread(target=t9)
+    tasks.append(t9_1)
+    # 进入 JSfinder函数 获取子所有域名+url路径
+    t10 = request(url).jsFinder()
     t10_1 = Thread(target=t10)
     tasks.append(t10_1)
-    # 进入 isCDN函数 判断是否存在CDN信息
-    t11 = request(url).isCDN()
+    # 进入getPorts函数 获取网站开发端口信息
+    t11 = request(url).getPorts()
     t11_1 = Thread(target=t11)
     tasks.append(t11_1)
-    # 进入 JSfinder函数 查找js文件及提取子域名
-    t12 = request(url).jsFinder()
+    # 进入 isCDN函数 判断是否存在CDN信息
+    t12 = request(url).isCDN()
     t12_1 = Thread(target=t12)
     tasks.append(t12_1)
+    # 进入 GoogleHacking函数 查找js文件及提取子域名
+    t13 = request(url).googleHack()
+    t13_1 = Thread(target=t13)
+    tasks.append(t13_1)
     # 进入 wafw00f函数 侦探网站的waf
     def mainDetect():
         domain = allDict['urlPATH']
@@ -110,9 +108,9 @@ def main(url, subDomain):
             if len(domain) > 0:
                 request(domain[0]).detectWaf()
         print("\033[1;34m[*] 完成网站waf信息侦测, 共"+str(len(allDict['framework'][2]))+"条数据!!\033[0m")
-    t13 = mainDetect()
-    t13_1 = Thread(target=t13)
-    tasks.append(t13_1)
+    t14 = mainDetect()
+    t14_1 = Thread(target=t14)
+    tasks.append(t14_1)
     for i in tasks:
         i.start()
     for j in tasks:
@@ -134,15 +132,9 @@ if __name__ == '__main__':
         print('\033[1;35m[-] 当前网址不可访问, 尝试根域名信息查询!!\033[0m')
         request(subDomain).Icp()
         request(subDomain).getCrtDomain()
+        request(subDomain).Chaziyu()
         request(subDomain).virusDomain()
-        def able2GFW():
-            gfwFlag = request(url).ableGFW()
-            if gfwFlag == True:
-                # 进入 Hackertarget函数 获取子域名函数(需翻墙)
-                request(subDomain).hackerTarget()
-                # 进入 GoogleHacking函数 获取子所有域名+url路径 (需翻墙）
-                request(subDomain).googleHack()
-        able2GFW()
+        request(subDomain).googleHack()
         print('\033[1;34m[-] 根域名信息查询完毕!!\033[0m')
     end = time.time()
     print('[*] 所有检测任务完成, 开始生成检测报告......')

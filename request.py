@@ -64,20 +64,6 @@ class request:
         except Exception as e:
             return e
 
-    # 判断当前ip能否翻墙
-    def ableGFW(self):
-        header = headers('www.google.com.hk')
-        site = 'https://www.google.com.hk'
-        print('[*] 正在通过google.com判断当前ip能否科学上网......')
-        try:
-            r = requests.get(url=site, headers=header, proxies=proxies, timeout=8).status_code
-            GFW_flag = True
-        except Exception as e:
-            GFW_flag = False
-            error.append('当前ip地址无法翻墙'+'-->'+str(e))
-            print('\033[1;31m[-] 当前ip地址无法科学上网, 如需完整查询内容请挂代理!\033[0m')
-        return GFW_flag
-
     #获取当前查询网站的ip地址 及对应的国家
     def domain2ip(self):
         global allDict, error, times
@@ -135,7 +121,7 @@ class request:
         ip_list, beian_list, domain_list, whois_list = [], [], [], []
         url_ip = site+self.url+'/'
         url_domain = site+self.subdomain+"/domain.htm"
-        url_beian = site+self.subdomain+"/beiAn.htm"
+        url_beian = site+self.subdomain+"/beian.htm"
         url_whois = site+self.subdomain+"/whois.htm"
         def ip(times):
             flag3_1 = False
@@ -182,11 +168,13 @@ class request:
             '''ip138的备案功能'''
             try:
                 r_beian = self.get(url_beian, header)  #备案的解析请求
-                r1_beian_date = re.findall('class="date"\>\n(.*?)\</span\>', r_beian)
-                r1_beian_content = re.findall('target="_blank"\>(.*?)\</a\>\n</p\>', r_beian)
+                r1_beian_date = re.findall('class="date">\n(.*?)</span>', r_beian)
+                r1_beian_content = re.findall('target="_blank">(.*?)</a>\n</p>', r_beian)
                 flag3_3 = True
                 if r1_beian_content == []:
                     r1_beian_content = ['未备案']
+                if r1_beian_date == []:
+                    r1_beian_date = ['空']
                 for i, j in zip(r1_beian_content, r1_beian_date):
                     beian_str = i+':'+j.rstrip(' ')  #去除多余的空格
                     beian_list.append(beian_str)
@@ -387,35 +375,36 @@ class request:
             else:
                 times = tryTimes
 
-    # Hackertarget获取子域名函数(需翻墙）
-    def hackerTarget(self):
+    # chaziyu.com获取子域名函数
+    def Chaziyu(self):
         global allDict, error, times
         flag9 = False
-        header = headers('api.hackertarget.com')
-        site = "https://api.hackertarget.com/hostsearch/?q="
+        header = headers('chaziyu.com')
+        site = "https://chaziyu.com/"
         result = []
-        print("[*] 正在通过hackertarget收集子域名......")
-        url = site + self.url
+        print("[*] 正在通过chaziyu.com收集子域名......")
+        url = site + self.subdomain + '/'
         try:
             r = requests.get(url=url, proxies=proxies, headers=header)
-            r1 = re.findall('\n(.*),', r.text)
+            r1 = re.findall('target="_blank">(.*)</a>', r.text)
             for i in r1:
-                result.append(i)
+                if self.subdomain in i:
+                    result.append(i)
             flag9 = True
             result1 = list(set(result))
             allDict['domain'] += result1
-            print("\033[1;34m[*] 完成hackertarget子域名获取, 共"+str(len(result1))+"条数据!!\033[0m")
+            print("\033[1;34m[*] 完成chaziyu.com子域名获取, 共"+str(len(result1))+"条数据!!\033[0m")
         except Exception as e:
             times -= 1
-            error.append(self.url+'-->'+'hackertarget获取子域名信息失败!'+'-->'+str(e))
-            print('\033[1;31m[-] hackertarget获取子域名信息查询失败!\033[0m')
+            error.append(self.url+'-->'+'chaziyu.com获取子域名信息失败!'+'-->'+str(e))
+            print('\033[1;31m[-] chaziyu.com获取子域名信息查询失败!\033[0m')
         finally:
             if (flag9 != True) and (times >= 1):
-                self.hackerTarget()
+                self.Chaziyu()
             else:
                 times = tryTimes
 
-    # GoogleHacking获取子域名 (需翻墙）
+    # GoogleHacking获取子域名
     def googleHack(self):
         global allDict, error, times
         flag10 = False
@@ -559,7 +548,7 @@ class request:
         print('[*] 正在通过myssl.com判断网站是否存在CDN......')
         try:
             r = requests.get(url=url, headers=header, timeout=40, proxies=self.proxy, allow_redirects=allow_redirects, verify=allow_ssl_verify)
-            data = json.loads(r)["data"]
+            data = json.loads(r.text)["data"]
             flag12 = True
             allDict['isCDN'] += data   #返回的形式为 [{}]
             print("\033[1;34m[*] 完成CDN查询, 共"+str(len(data))+"条数据!!\033[0m")

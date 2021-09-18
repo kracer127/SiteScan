@@ -35,7 +35,7 @@ allow_ssl_verify = False
 tryTimes = 3
 
 # google搜索过程中的提取量
-num2google = 300
+num2google = 200
 
 
 
