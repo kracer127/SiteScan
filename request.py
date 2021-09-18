@@ -558,7 +558,7 @@ class request:
         url = site + self.url
         print('[*] 正在通过myssl.com判断网站是否存在CDN......')
         try:
-            r = requests.get(url=url, headers=header, timeout=30, verify=False)
+            r = requests.get(url=url, headers=header, timeout=40, proxies=self.proxy, allow_redirects=allow_redirects, verify=allow_ssl_verify)
             data = json.loads(r)["data"]
             flag12 = True
             allDict['isCDN'] += data   #返回的形式为 [{}]
