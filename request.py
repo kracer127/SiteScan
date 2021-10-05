@@ -196,7 +196,7 @@ class request:
                 r_whois = whois(self.url)
                 r1_whois = {}
                 if r_whois["domain_name"] == None:
-                    r1_whois = ['当前域名没有whois信息!']
+                    r1_whois = []
                 else:
                     for k in r_whois.keys():
                         r1_whois[k] = str(r_whois[k])
