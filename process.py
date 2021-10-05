@@ -44,7 +44,7 @@ def processData(allDict):
     else:
         pangZhan = list(set(pangZhan0))
     whois = allDict["whois"]
-    if whois == []:
+    if whois == [[]]:
         whois = {'空': '空'}
     else:
         whois = whois[0]
