@@ -316,7 +316,7 @@ def main(allDict, target):
         print('\033[1;31m[-] 网址 {0} 不可访问, 侦测waf类型失败!\033[0m'.format(target))
     waf = attacker.identwaf(True)
     if len(waf) > 0:
-        allDict['framework'][2] = {'waf': str(C+(E+' and/or '+C).join(waf)+E)}
+        allDict['framework'][2] = {'waf': str(waf)}
     if len(waf) == 0:
         allDict['framework'][2] = {'waf': '没有侦测到waf'}
 
