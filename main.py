@@ -34,10 +34,28 @@ logo = '''\033[1;32m
                                                         \033[1;36mGithub:https://github.com/kracer127\033[0m
 '''
 
+# 多线程解决批查询(暂未实现，不稳定)
+def startMainThread(ip_url):
+    url = processUrl(ip_url)[0]
+    subDomain = processUrl(ip_url)[-1]
+    if isAlive(url) == True:  # 检测用户输入网址是否有效
+        main(url, subDomain)
+    else:
+        print('\033[1;35m[-] 当前网址 {0} 不可访问, 尝试根域名信息查询!!\033[0m'.format(url))
+        request(subDomain).Icp()
+        request(subDomain).getCrtDomain()
+        request(subDomain).Chaziyu()
+        request(subDomain).virusDomain()
+        request(subDomain).googleHack()
+        print('\033[1;34m[-] 根域名 {0} 信息查询完毕!!\033[0m'.format(subDomain))
+    print('[*] 网址：{0} 所有检测任务完成, 开始生成检测报告......'.format(url))
+    all2HTML(url, allDict, error)
+
+
 # 主函数入口
 def main(url, subDomain):
     tasks = []
-    print('[+] 检测任务开启, 预估需要5min......')
+    print('[+] ============ 网址：{0} 检测任务开启, 预估需要5min ============'.format(url))
     # 进入 domain2ip函数 获取当前url的ip解析及粗略地理位置
     t1 = request(url).domain2ip()
     t1_1 = Thread(target=t1)
@@ -117,28 +135,23 @@ def main(url, subDomain):
         j.join()
 
 
-
 # 最终执行函数
 if __name__ == '__main__':
     print(logo)
+    urlList = []
     args = parse_args()
-    ip_url = args.url
-    start = time.time()
-    url = processUrl(ip_url)[0]
-    subDomain = processUrl(ip_url)[-1]
-    if isAlive(url) == True:  # 检测用户输入网址是否有效
-        main(url, subDomain)
+    if args.url:
+        urlList.append(args.url)
     else:
-        print('\033[1;35m[-] 当前网址不可访问, 尝试根域名信息查询!!\033[0m')
-        request(subDomain).Icp()
-        request(subDomain).getCrtDomain()
-        request(subDomain).Chaziyu()
-        request(subDomain).virusDomain()
-        request(subDomain).googleHack()
-        print('\033[1;34m[-] 根域名信息查询完毕!!\033[0m')
+        if args.file:
+            with open(args.file, 'r', encoding='utf-8') as u:
+                dataURL = u.readlines()
+                for i in dataURL:
+                    urlList.append(i.strip())
+    start = time.time()
+    for ip_url in urlList:
+        startMainThread(ip_url)
     end = time.time()
-    print('[*] 所有检测任务完成, 开始生成检测报告......')
-    all2HTML(url, allDict, error)
     print("\033[1;36m[*] 本次检测共消耗时间:{:.2f}s\033[0m".format(end-start))
 
 

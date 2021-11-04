@@ -258,7 +258,7 @@ class request:
         url1 = site+self.url+'/'  # 该域名下的网站备案情况
         try:
             res = self.get(url1, header)
-            if '没有符合条件的记录' not in res:   #解决未备案情况的报错
+            if '没有符合条件的记录' not in res:   # 解决未备案情况的报错
                 res1 = re.findall('id=\"ba_Name\">(.*?)</span>', res)
                 res2 = re.findall('id=\"ba_Type\">(.*?)</span>', res)
                 res3 = re.findall('id=\"ba_License\">(.*?)</span>', res)

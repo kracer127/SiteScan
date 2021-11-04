@@ -35,8 +35,7 @@ allow_ssl_verify = False
 tryTimes = 3
 
 # google搜索过程中的提取量
-num2google = 200
-
+num2google = 100
 
 
 # 扫描1224个常见端口（nmap + 自己的收集）

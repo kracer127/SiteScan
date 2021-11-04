@@ -16,6 +16,7 @@ def parse_args():
     # parser.add_argument("-h", "--help", help="show this help message and exit")
     parser.add_argument("-u", "--url", help="The website to scan")
     parser.add_argument("-p", "--proxy", help="Use an HTTP proxy to perform requests, examples:http://hostname:8080, \nsocks5://hostname:1080,http://user:pass@hostname:8080")
+    parser.add_argument("-f", "--file", help="Scanning the address in the file")
     return parser.parse_args()
 
 # 预处理用户输入的URL
