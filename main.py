@@ -151,6 +151,7 @@ if __name__ == '__main__':
     start = time.time()
     for ip_url in urlList:
         startMainThread(ip_url)
+        allDict = {'nowIP': [], 'domain': [], 'ports': [], 'whois': [], 'beiAn': [], 'framework': [[], {}, {}], 'urlPATH': [], 'isCDN': [], 'pangZhan': [], 'historyIP': []}
     end = time.time()
     print("\033[1;36m[*] 本次检测共消耗时间:{:.2f}s\033[0m".format(end-start))
 

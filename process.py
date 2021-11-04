@@ -80,9 +80,6 @@ def processData(allDict):
         urlPATH.remove(t)
 
 
-
-
-
 def all2HTML(url, allDict, error):
     processData(allDict)
     doc = dominate.document(title='webscan_report')
@@ -217,8 +214,7 @@ def all2HTML(url, allDict, error):
 
     with open('output/{0}_report.html'.format(url), 'w', encoding='utf-8') as f:
         f.write(doc.render())
-        print("\033[1;34m[*] 检测报告位置: output/{0}_report.html!!\033[0m".format(url))
-    allDict = {'nowIP': [], 'domain': [], 'ports': [], 'whois': [], 'beiAn': [], 'framework': [[], {}, {}], 'urlPATH': [], 'isCDN': [], 'pangZhan': [], 'historyIP': []}
+        print("\033[1;34m[*] 检测报告位置: output/{0}_report.html!!\033[0m \n\n".format(url))
 
 
 
