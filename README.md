@@ -30,6 +30,7 @@ pip3 install -r requirements.txt
 
 ```python
 >>python3 main.py -u http://www.xxx.com
+>>python3 main.py -f url.txt
 >>python3 main.py -u http://www.xxx.com -p http://127.0.0.1:8080
 ```
 
