@@ -460,26 +460,13 @@ class request:
     def getPorts(self):
         global allDict, error, times
         flag11 = False
-        header = {
-    'Host': 'api.ip33.com',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0',
-    'Accept': 'application/json, text/javascript, */*; q=0.01',
-    'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
-    'Accept-Encoding': 'gzip, deflate',
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'Referer': 'http://www.ip33.com/port_scan.html',
-    'Content-Length': '34',
-    'Origin': 'http://www.ip33.com',
-    'DNT': '1',
-    'X-Forwarded-For': '8.8.8.8',
-    'Connection': 'close'
-        }
-        site = 'http://api.ip33.com/port_scan/scan'
+        getStrIp = allDict['nowIP'][0].split("::")[0]
         result = []
         print('[*] 正在探测端口开放情况(时间稍长)......')
         class brutePorts():
-            def __init__(self):
+            def __init__(self, ip):
                 self.url_port = 'http://api.ip33.com/port_scan/scan'
+                self.ip = ip
                 self.header_port = {
                     'Host': 'api.ip33.com',
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0',
@@ -496,7 +483,7 @@ class request:
                 }
                 self.tasks = Queue()
                 for i in ports:
-                    data3 = {"ip": "121.5.219.229", "port": int(i), "time": 3000}
+                    data3 = {"ip": ip, "port": int(i), "time": 3000}
                     self.tasks.put_nowait(data3)
 
             def bruteMain(self):
@@ -524,7 +511,7 @@ class request:
                     gevent_list.append(gev)
                 gevent.joinall(gevent_list)
         try:
-            brutePorts().bruteStart()
+            brutePorts(getStrIp).bruteStart()
             flag11 = True
             print('\n'+"\033[1;34m[*] 完成获取端口信息, 共"+str(len(allDict['ports']))+"条数据!!\033[0m")
         except Exception as e:
