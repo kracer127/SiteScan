@@ -10,7 +10,7 @@ from dominate.tags import *
 
 # 对allDict的数据处理函数
 def processData(allDict):
-    global nowIP, historyIP, isCDN, domain, ports, pangZhan, whois, urlPATH, beiAn, framework, cms, waf, houTai
+    global nowIP, historyIP, isCDN, domain, ports, pangZhan, whois, urlPATH, beiAn, framework, cms, waf, houTai, error
     nowIP = allDict['nowIP']
     if nowIP == []:
         nowIP = ['空', '空']
@@ -44,7 +44,7 @@ def processData(allDict):
     else:
         pangZhan = list(set(pangZhan0))
     whois = allDict["whois"]
-    if whois == [[]]:
+    if (whois == [[]]) or (whois == []):
         whois = {'空': '空'}
     else:
         whois = whois[0]
@@ -78,9 +78,10 @@ def processData(allDict):
                 houTai.append(d)
     for t in houTai:
         urlPATH.remove(t)
+    error = allDict['error']
 
 
-def all2HTML(url, allDict, error):
+def all2HTML(url, allDict):
     processData(allDict)
     doc = dominate.document(title='webscan_report')
 
@@ -214,7 +215,7 @@ def all2HTML(url, allDict, error):
 
     with open('output/{0}_report.html'.format(url), 'w', encoding='utf-8') as f:
         f.write(doc.render())
-        print("\033[1;34m[*] 检测报告位置: output/{0}_report.html!!\033[0m \n\n".format(url))
+        print("\033[1;34m[*] 检测报告位置: output/{0}_report.html!!\033[0m \n".format(url))
 
 
 
