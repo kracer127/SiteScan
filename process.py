@@ -12,7 +12,6 @@ allDict = {'nowIP': ['154.31.21.166::美国    科进'], 'domain': ['3-abc.com',
 # 对allDict的数据处理函数
 def processData(allDict):
     global nowIP, historyIP, isCDN, domain, ports, pangZhan, whois, urlPATH, beiAn, framework, cms, waf, houTai, error
-    print(allDict)
     nowIP = allDict['nowIP']
     if nowIP == []:
         nowIP = ['空', '空']
