@@ -1,0 +1,8 @@
+requests
+gevent
+bs4
+dominate
+colorama
+future
+pluginbase
+lxml

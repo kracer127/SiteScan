@@ -40,10 +40,9 @@ pip3 install -r requirements.txt
 文件夹：lib文件夹 --- 配置文件。
 文件夹: output文件夹 --- 探测结果生成的html报告表。
 文件夹：Third --- 第三方模块, 包含wafwoof识别云waf、JSFinder爬取js文件。
-文件：commom.py --- 用户输入处理、网址存活检测等。
+文件：commom.py --- 用户输入处理、网址存活检测及处理最终结果并生成html报告。
 文件：config.py --- requests库的请求设置：header头部、超时时间、google的url提取量、网络错误尝试次数、重定向和代理设置，以及定义扫描的端口。
 文件：main.py --- 主函数入口。
-文件：process.py --- 处理最终结果并生成html报告。
 文件：request.py --- 封装的所有请求类。
 ```
 
